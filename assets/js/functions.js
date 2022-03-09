@@ -9,13 +9,13 @@ function getWeather() {
     fetch('https://www.metaweather.com/api/location/search/?query=' + city)
         .catch(() => {
             cardsContainer.innerHTML = `
-            <div class="card shadow-0 border mb-3">
-                <div class="card-body p-4">
+                <div class="card shadow-0 border mb-3">
+                    <div class="card-body p-4">
 
-                    <h4 class="mb-1 sfw-normal">Error Occured</h4>
+                        <h4 class="mb-1 sfw-normal">Error Occured</h4>
 
-                </div>
-            </div>`
+                    </div>
+                </div>`
         })
         .then(res => res.json())
         .then(([w]) => {
@@ -71,7 +71,7 @@ function writeTemp(temp, isCelcius) {
 }
 
 function calculateFeelsLikeTemp(temp, hum) {
-    if(temp < 80) return 0.5 * (temp + 61 + ((temp - 68)* 1.2) + (hum * 0.094))
+    if (temp < 80) return 0.5 * (temp + 61 + ((temp - 68) * 1.2) + (hum * 0.094))
     const heatIndex = -42.379 + 2.04901523 * temp + 10.14333127 * hum - 0.22475541 * temp * hum - 0.0068783 * temp ** 2
         - 0.05481717 * hum ** 2 + 0.00122874 * temp ** 2 * hum + 0.00085282 * temp * hum ** 2 - 0.00000199 * temp ** 2 * hum ** 2
     return heatIndex - (hum < 13 && 80 <= temp && temp <= 112 ? ((13 - hum) / 4) * Math.sqrt((17 - Math.abs(temp - 95)) / 17) : hum > 85 && 80 <= temp && temp <= 87 ? ((hum - 85) / 10) * ((87 - temp) / 5) : 0
