@@ -1,7 +1,14 @@
-getWeather()
-cityForm.addEventListener('submit', e => {
+cityForm.addEventListener('submit', async e => {
     e.preventDefault()
-    getWeather()
+    try {
+        const city = document.getElementById('input-city').value || 'Jakarta'
+        loading()
+        const location = await getLocation(city)
+        const weather = await getWeather(location.woeid)
+        updateUI(location, weather)
+    } catch (error) {
+        showError(error)
+    }
 })
 
 // ketika tombol celcius ditekan
