@@ -1,9 +1,10 @@
+loadFirstTime()
 cityForm.addEventListener('submit', async e => {
     e.preventDefault()
     try {
-        const city = document.getElementById('input-city').value || 'Jakarta'
+        const city = document.getElementById('input-city').value
         loading()
-        const location = await getLocation(city)
+        const location = await getLocation({ city })
         const weather = await getWeather(location.woeid)
         updateUI(location, weather)
     } catch (error) {

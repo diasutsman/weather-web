@@ -1,5 +1,6 @@
-function getLocation(city) {
-    return fetch('https://www.metaweather.com/api/location/search/?query=' + city)
+function getLocation({ city, latt, long }) {
+    console.log(city || `${latt},${long}`)
+    return fetch('https://www.metaweather.com/api/location/search/?' + (city? `query=${city}` : `lattlong=${latt},${long}`))
         .then(res => {
             if (!res.ok) {
                 throw new Error(res.statusText)
@@ -10,6 +11,22 @@ function getLocation(city) {
             if (!obj) throw new Error('City not found')
             return obj
         })
+}
+function loadFirstTime() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(async position => {
+            loading()
+            const location = await getLocation({
+                latt: position.coords.latitude,
+                long: position.coords.longitude
+            })
+            const weather = await getWeather(location.woeid)
+            updateUI(location, weather)
+        });
+    } else {
+        alert("Geolocation is not supported by this browser.")
+    }
+
 }
 
 function getWeather(woeid) {
