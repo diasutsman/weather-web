@@ -2,30 +2,43 @@ loadFirstTime()
 cityForm.addEventListener('submit', async e => {
     e.preventDefault()
     try {
-        const city = document.getElementById('input-city').value
         loading()
-        const location = await getLocation({ city })
-        const weather = await getWeather(location.woeid)
-        updateUI(location, weather)
+        const city = cityInput.value
+        const weather = await getWeatherByLocation({ city })
+        updateUI(weather)
     } catch (error) {
         showError(error)
     }
 })
 
 // ketika tombol celcius ditekan
-celciusBtn.addEventListener('click', function () {
-    // merubah setiap derajat dari fahrenheit ke celcius jika masih farenheit
-    Array.from(document.getElementsByClassName('degrees'))
-        .forEach(el => {
-            if (!el.innerText.endsWith('°C')) el.innerText = farenheitToCelcius(parseFloat(el.innerText)) + '°C'
-        })
+celciusBtn.addEventListener('click', async () => {
+    try {
+        loading()
+        const city = cityInput.value
+        if(!city) {
+            loadFirstTime()
+            return
+        }
+        const weather = await getWeatherByLocation({ city }, 'metric')
+        updateUI(weather)
+    } catch (error) {
+        showError(error)
+    }
 })
 
 // ketika tombol farenheit ditekan
-farenheitBtn.addEventListener('click', function () {
-    // merubah setiap derajat dari celcius ke farenheit
-    Array.from(document.getElementsByClassName('degrees'))
-        .forEach(el => {
-            if (!el.innerText.endsWith('°F')) el.innerText = celciusToFarenheit(parseFloat(el.innerText)) + '°F'
-        })
+farenheitBtn.addEventListener('click', async () => {
+    try {
+        const city = cityInput.value
+        if(!city) {
+            loadFirstTime()
+            return
+        }
+        const weather = await getWeatherByLocation({ city }, 'imperial')
+        loading()
+        updateUI(weather)
+    } catch (error) {
+        showError(error)
+    }
 })
