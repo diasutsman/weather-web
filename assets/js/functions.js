@@ -20,18 +20,27 @@ function loadFirstTime() {
                 const weather = await getWeatherByLocation({
                     latt: position.coords.latitude,
                     long: position.coords.longitude
-                }, celciusBtn.checked? 'metric' : 'imperial')
-                
+                }, celciusBtn.checked ? 'metric' : 'imperial')
+
                 updateUI(weather)
             } catch (error) {
                 showError(error)
             }
-        }, error => {
+        }, async error => {
             switch (error.code) {
                 case error.PERMISSION_DENIED:
-                    showError("User denied the request for Geolocation.")
+                    loading()
+                    const { latitude: lat, longitude: lon } = await fetch('https://geolocation-db.com/json/')
+                        .then(res => res.json())
+                        .then(data => data)
+                    const weather = await getWeatherByLocation({
+                        latt: lat,
+                        long: lon
+                    }, celciusBtn.checked ? 'metric' : 'imperial')
+                    updateUI(weather)
+                    //showError("User denied the request for Geolocation.")
                     break;
-                case error.POSITION_UNAVAILABLE:
+                    case error.POSITION_UNAVAILABLE:
                     showError("Location information is unavailable.")
                     break;
                 case error.TIMEOUT:
@@ -59,7 +68,7 @@ function updateUI(weather) {
     cardsContainer.innerHTML = showWeatherCard(weather)
 }
 
-function showWeatherCard({ weather: [weather], main, name , unit}) {
+function showWeatherCard({ weather: [weather], main, name, unit }) {
     const units = { 'metric': '°C', 'imperial': '°F' }
     return `
         <div class="card shadow-0 border mb-3 w-100">
